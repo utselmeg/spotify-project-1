@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>My Spotify Profile</title>
+        <script src="src/script.ts" type="module"></script>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f9f9f9;
+            }
+
+            header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            h1 {
+                color: #1DB954; /* Spotify green */
+                margin: 0;
+            }
+
+            .logout-btn {
+                background-color: #ff5252;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 15px;
+                font-size: 0.9em;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            .logout-btn:hover {
+                background-color: #ff7070;
+            }
+
+            h2, h3, h4 {
+                color: #333;
+            }
+
+            #profile {
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                margin-bottom: 30px;
+            }
+
+            #avatar {
+                display: block;
+                margin: 20px 0;
+            }
+
+            #avatar img {
+                border-radius: 50%;
+                border: 3px solid #1DB954;
+            }
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            #profile ul li {
+                margin-bottom: 10px;
+            }
+
+            a {
+                color: #1DB954;
+                text-decoration: none;
+            }
+
+            a:hover {
+                text-decoration: underline;
+            }
+
+            #playlists {
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .playlists-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+            }
+
+            .playlist-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                border-radius: 4px;
+                background-color: #f5f5f5;
+                transition: background-color 0.2s;
+                cursor: pointer;
+            }
+
+            .playlist-item:hover {
+                background-color: #eaeaea;
+            }
+
+            .playlist-image {
+                flex: 0 0 60px;
+                height: 60px;
+                margin-right: 15px;
+                border-radius: 4px;
+                overflow: hidden;
+                background-color: #ddd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .playlist-image img {
+                object-fit: cover;
+            }
+
+            .playlist-image-placeholder {
+                font-size: 24px;
+                color: #999;
+            }
+
+            .playlist-info {
+                flex: 1;
+            }
+
+            .playlist-name {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 5px;
+            }
+
+            .playlist-details {
+                font-size: 0.9em;
+                color: #666;
+                margin-bottom: 8px;
+            }
+
+            .view-tracks-btn {
+                background-color: #1DB954;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 5px 10px;
+                font-size: 0.8em;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+
+            .view-tracks-btn:hover {
+                background-color: #1ed760;
+            }
+
+            /* Track display styles */
+            .playlist-tracks-container {
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin: 10px 0 20px;
+                padding: 15px;
+                grid-column: 1 / -1;
+            }
+
+            .tracks-list {
+                margin-top: 15px;
+            }
+
+            .track-item {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                border-bottom: 1px solid #eee;
+                transition: background-color 0.2s;
+            }
+
+            .track-item:hover {
+                background-color: #f9f9f9;
+            }
+
+            .track-rank {
+                flex: 0 0 30px;
+                font-weight: bold;
+                color: #777;
+            }
+
+            .track-info {
+                flex: 1;
+                min-width: 0; /* Allow truncation */
+            }
+
+            .track-name {
+                font-weight: bold;
+                margin-bottom: 3px;
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .track-artist {
+                font-size: 0.85em;
+                color: #666;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .track-album {
+                flex: 0 0 20%;
+                font-size: 0.85em;
+                color: #666;
+                padding: 0 10px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .track-duration {
+                flex: 0 0 50px;
+                text-align: right;
+                font-size: 0.85em;
+                color: #666;
+            }
+
+            .track-popularity {
+                flex: 0 0 120px;
+                padding-left: 15px;
+                display: flex;
+                align-items: center;
+            }
+
+            .popularity-bar {
+                height: 6px;
+                width: 70px;
+                background-color: #eee;
+                border-radius: 3px;
+                margin-right: 8px;
+                overflow: hidden;
+            }
+
+            .popularity-fill {
+                height: 100%;
+                background-color: #1DB954;
+            }
+
+            .preview-btn {
+                background: none;
+                border: none;
+                font-size: 1.2em;
+                cursor: pointer;
+                margin-right: 5px;
+                padding: 0;
+            }
+
+            .loading-indicator {
+                padding: 10px;
+                color: #777;
+                text-align: center;
+                font-style: italic;
+                grid-column: 1 / -1;
+            }
+
+            .view-all-link {
+                display: block;
+                text-align: center;
+                margin-top: 15px;
+                font-weight: bold;
+            }
+
+            @media (max-width: 768px) {
+                .playlists-list {
+                    grid-template-columns: 1fr;
+                }
+
+                .track-album {
+                    display: none;
+                }
+
+                .track-popularity {
+                    flex: 0 0 80px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Spotify Profile</h1>
+            <button class="logout-btn" onclick="window.logout()">Logout</button>
+        </header>
+
+        <section id="profile">
+            <h2>Logged in as <span id="displayName"></span></h2>
+            <span id="avatar"></span>
+            <ul>
+                <li>User ID: <span id="id"></span></li>
+                <li>Email: <span id="email"></span></li>
+                <li>Spotify URI: <a id="uri" href="#"></a></li>
+                <li>Link: <a id="url" href="#"></a></li>
+                <li>Profile Image: <span id="imgUrl"></span></li>
+            </ul>
+        </section>
+
+        <section id="playlists">
+            <h2>Your Spotify Playlists</h2>
+            <div id="playlists-container">
+                <!-- Playlists will be populated here by JavaScript -->
+                <p>Loading playlists...</p>
+            </div>
+        </section>
+    </body>
+</html>
